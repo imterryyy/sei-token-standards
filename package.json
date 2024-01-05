@@ -1,0 +1,16 @@
+{
+  "name": "sei-token-standards",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-terryyy-eth:terryyy-eth/sei-token-standards.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
