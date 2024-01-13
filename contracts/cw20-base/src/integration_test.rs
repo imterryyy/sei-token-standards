@@ -1,6 +1,6 @@
 mod tests {
   use super::utils::*;
-  use cosmwasm_std::Uint128;
+  use cosmwasm_std::{Uint128, StdError, OverflowError, OverflowOperation};
 
   #[test]
   fn should_mint_token() {
@@ -116,7 +116,8 @@ mod tests {
       })
     ).unwrap();
 
-    assert_eq!(recipient_balance.balance, total_supply_before_burn.total_supply - burn_amount);
+    let recipient_balance_expected = total_supply_before_burn.total_supply - burn_amount;
+    assert_eq!(recipient_balance.balance, recipient_balance_expected);
 
     // Check total supply
     let token_info: cw20::TokenInfoResponse = query(&app, &token_addr, &(crate::msg::QueryMsg::TokenInfo {})).unwrap();
@@ -179,7 +180,8 @@ mod tests {
       })
     ).unwrap();
 
-    assert_eq!(recipient_balance.balance, total_supply_before_burn.total_supply - burn_amount);
+    let recipient_balance_expected = total_supply_before_burn.total_supply - burn_amount;
+    assert_eq!(recipient_balance.balance, recipient_balance_expected);
 
     // Check total supply
     let token_info: cw20::TokenInfoResponse = query(&app, &token_addr, &(crate::msg::QueryMsg::TokenInfo {})).unwrap();
@@ -230,7 +232,13 @@ mod tests {
       })
     );
 
-    assert!(res.is_err())
+    assert_err(res, crate::error::ContractError::Std(StdError::Overflow { 
+      source: OverflowError {
+        operation: OverflowOperation::Sub,
+        operand1: allowance.to_string(),
+        operand2: burn_amount.to_string(),
+      }
+     }));
   }
 
   #[test]
@@ -307,7 +315,13 @@ mod tests {
       })
     );
 
-    assert!(res.is_err())
+    assert_err(res, crate::error::ContractError::Std(StdError::Overflow { 
+      source: OverflowError {
+        operation: OverflowOperation::Sub,
+        operand1: Uint128::from(1_000u128).to_string(),
+        operand2: transfer_amount.to_string(),
+      }
+     }));
   }
 
   #[test]
@@ -627,7 +641,13 @@ mod tests {
       })
     );
 
-    assert!(res.is_err())
+    assert_err(res, crate::error::ContractError::Std(StdError::Overflow { 
+      source: OverflowError {
+        operation: OverflowOperation::Sub,
+        operand1: allowance.to_string(),
+        operand2: transfer_amount.to_string(),
+      }
+     }));
   }
 }
 
